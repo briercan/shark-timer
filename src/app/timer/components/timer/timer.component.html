@@ -1,8 +1,13 @@
 <div class="flex-spacer"></div>
 <app-time-display #timeDisplay
+                  (click)="showEditor = true"
+                  *ngIf="!showEditor"
                   [time]="time$ | async"
                   [showHundriths]="false"
                   [canSetTime]="true"
                   (setTime)="setTime($event)"></app-time-display>
+<app-time-editor *ngIf="showEditor" [formControl]="timerControl" name="time">
+
+</app-time-editor>
 <div class="flex-spacer"></div>
 <mat-progress-bar mode="determinate" [value]="percent$ | async"></mat-progress-bar>

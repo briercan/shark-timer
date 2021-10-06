@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { BehaviorSubject, EMPTY, Observable, Subject, timer } from 'rxjs';
 import { filter, map, mapTo, scan, startWith, switchMap, takeUntil, takeWhile, tap } from 'rxjs/operators';
 import { TimerService } from '../../services/timer.service';
@@ -22,10 +23,26 @@ export class TimerComponent implements OnInit, OnDestroy {
   reset$: Subject<void> = new Subject<void>();
   destroyed$: Subject<void> = new Subject<void>();
 
+  _showEditor: boolean;
+  get showEditor (){
+    return this._showEditor;
+  }
+
+  set showEditor (value: boolean){
+    this._showEditor = value;
+    if(value){
+      this.timerService.stop();
+    }
+  }
+
   //startTime: number = 5 + 1000 * 60 * 5;
   startTime: number = 0 + 1000 * 1 * 5;
 
-  constructor(private cd: ChangeDetectorRef, private timerService: TimerService) { }
+  timerControl: FormControl;
+
+  constructor(private cd: ChangeDetectorRef, private timerService: TimerService) {
+    this.timerControl = new FormControl();
+  }
 
   ngOnInit() {
     this.interval$ = timer(0, 10);
@@ -36,14 +53,17 @@ export class TimerComponent implements OnInit, OnDestroy {
       this.cd.markForCheck();
     });
 
-    this.timeDisplay.settingTime$.pipe(
-      filter(settingTime => settingTime),
-    ).subscribe(() => this.timerService.stop());
-
     this.timerService.isRunning$.pipe(
       filter(start => start),
-    ).subscribe(() => this.timeDisplay.endSetTime());
+    ).subscribe(() => {
+      this.showEditor = false;
+    });
+    this.timerControl.setValue(this.startTime);
+    this.timerControl.valueChanges.subscribe(x => {
+      this.showEditor = false;
+      this.setTime(x);
 
+    });
   }
 
   ngOnDestroy() {

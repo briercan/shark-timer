@@ -1,0 +1,26 @@
+<div class="time-input-form" [formGroup]="formGroup">
+  <mat-form-field>
+    <input matInput
+           type="number"
+           placeholder="Hours"
+           formControlName="inputHours"
+           >
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput
+           type="number"
+           placeholder="Minutes"
+           formControlName="inputMinutes"
+           >
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput
+           type="number"
+           placeholder="Seconds"
+           formControlName="inputSeconds"
+           >
+  </mat-form-field>
+  <button mat-button (click)="endSetTime()">
+    Done
+  </button>
+</div>

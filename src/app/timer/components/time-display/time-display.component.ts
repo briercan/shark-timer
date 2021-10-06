@@ -18,7 +18,7 @@ export class TimeDisplayComponent implements OnInit {
 
   @Output() setTime = new EventEmitter<number>();
 
-  settingTime$ = new BehaviorSubject<boolean>(false);
+
   inputHours: number;
   inputMinutes: number;
   inputSeconds: number;
@@ -28,22 +28,14 @@ export class TimeDisplayComponent implements OnInit {
   ngOnInit() {
   }
 
-  inputChange(hours: number, minutes: number, seconds: number) {
-    const timeVal = hours * this.hourInMs + minutes * this.minuteInMs + seconds * this.secondInMs;
-    this.setTime.emit(timeVal);
-  }
-
   startSetTime() {
     if (this.canSetTime) {
-      this.settingTime$.next(true);
       this.inputHours = this.hours;
       this.inputMinutes = this.minutes;
       this.inputSeconds = this.seconds;
     }
   }
-  endSetTime() {
-    this.settingTime$.next(false);
-  }
+
 
   get hours(): number {
     return Math.floor(this.time / this.hourInMs);

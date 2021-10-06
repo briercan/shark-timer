@@ -25,7 +25,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TimeEditorComponent } from './timer/components/time-editor/time-editor.component';
 
 
 @NgModule({
@@ -36,12 +37,14 @@ import { FormsModule } from '@angular/forms';
         TimerPageComponent,
         TimerControlsComponent,
         TimeDisplayComponent,
+        TimeEditorComponent,
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
         FormsModule,
+        ReactiveFormsModule,
         StoreModule.forRoot(reducers, { metaReducers }),
         EffectsModule.forRoot([AppEffects]),
         StoreDevtoolsModule.instrument({
