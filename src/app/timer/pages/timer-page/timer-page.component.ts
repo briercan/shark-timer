@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
+import { ClockType } from '../../models/timer.models';
+import { ActiveClockService } from '../../services/active-clock.service';
 
 @Component({
   selector: 'app-timer-page',
@@ -13,7 +15,7 @@ export class TimerPageComponent implements OnInit, OnDestroy {
   selectedTabIndex$ = new BehaviorSubject<number>(0);
   destroyed$: Subject<void> = new Subject<void>();
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute, private activeClockService: ActiveClockService) { }
 
   ngOnInit() {
     this.route.data.pipe(
@@ -26,6 +28,18 @@ export class TimerPageComponent implements OnInit, OnDestroy {
         this.selectedTabIndex$.next(1);
       }
     });
+
+    this.selectedTabIndex$
+    .pipe(
+      takeUntil(this.destroyed$)
+    )
+    .subscribe(idx => {
+      if(idx === 0){
+        this.activeClockService.setActiveClock(ClockType.Timer);
+      } else {
+        this.activeClockService.setActiveClock(ClockType.Stopwatch);
+      }
+    })
   }
 
   ngOnDestroy() {
@@ -36,4 +50,6 @@ export class TimerPageComponent implements OnInit, OnDestroy {
   tabChange(selectedTabIndex: number) {
     this.selectedTabIndex$.next(selectedTabIndex);
   }
+
+
 }

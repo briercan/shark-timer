@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { BehaviorSubject, EMPTY, Observable, Subject, timer } from 'rxjs';
 import { filter, map, mapTo, scan, startWith, switchMap, takeUntil, takeWhile, tap } from 'rxjs/operators';
+import { TimerService } from '../../services/timer.service';
 
 import { TimeDisplayComponent } from '../time-display/time-display.component';
 import { TimerControlsComponent } from '../timer-controls/timer-controls.component';
@@ -13,8 +14,6 @@ import { TimerControlsComponent } from '../timer-controls/timer-controls.compone
 })
 export class TimerComponent implements OnInit, OnDestroy {
   @ViewChild('timeDisplay') timeDisplay: TimeDisplayComponent;
-  @Input() controls: TimerControlsComponent;
-  @Input() active: boolean;
 
   time$: Observable<number>;
   percent$: Observable<number>;
@@ -23,24 +22,25 @@ export class TimerComponent implements OnInit, OnDestroy {
   reset$: Subject<void> = new Subject<void>();
   destroyed$: Subject<void> = new Subject<void>();
 
-  startTime: number = 5 + 1000 * 60 * 5;
+  //startTime: number = 5 + 1000 * 60 * 5;
+  startTime: number = 0 + 1000 * 1 * 5;
 
-  constructor(private cd: ChangeDetectorRef) { }
+  constructor(private cd: ChangeDetectorRef, private timerService: TimerService) { }
 
   ngOnInit() {
     this.interval$ = timer(0, 10);
 
-    this.controls.timerReset$.subscribe(() => {
+    this.timerService.timerReset$.subscribe(() => {
       this.resetTimer(this.startTime);
-      this.controls.stop();
+      this.timerService.stop();
       this.cd.markForCheck();
     });
 
     this.timeDisplay.settingTime$.pipe(
       filter(settingTime => settingTime),
-    ).subscribe(() => this.controls.stop());
+    ).subscribe(() => this.timerService.stop());
 
-    this.controls.timerStart$.pipe(
+    this.timerService.isRunning$.pipe(
       filter(start => start),
     ).subscribe(() => this.timeDisplay.endSetTime());
 
@@ -53,16 +53,16 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   resetTimer(startTime: number) {
     this.reset$.next();
-    this.controls.end(false);
+    this.timerService.end(false);
 
-    this.time$ = this.controls.timerStart$.pipe(
-      filter(() => this.active),
+    this.time$ = this.timerService.isRunning$.pipe(
       switchMap(start => (start ? this.interval$.pipe(mapTo(10)) : EMPTY)),
       scan((acc, val) => acc - val, startTime),
       startWith(startTime),
       tap(val => {
         if (val === 0) {
-          this.controls.end(true);
+          console.log('end timer');
+          this.timerService.end(true);
         }
       }),
       takeUntil(this.reset$),

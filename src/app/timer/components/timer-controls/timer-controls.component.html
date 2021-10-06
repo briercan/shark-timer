@@ -2,11 +2,7 @@
         class="start-button"
         (click)="startStop()">
 
-  <span *ngIf="timerActive && !(timerEnd$ | async) && !(timerStart$ | async)">Start</span>
-  <span *ngIf="timerActive && !(timerEnd$ | async) && (timerStart$ | async)">Stop</span>
-  <span *ngIf="timerActive && (timerEnd$ | async)">Ok</span>
-  <span *ngIf="!timerActive && !(stopwatchStart$ | async)">Start</span>
-  <span *ngIf="!timerActive && (stopwatchStart$ | async)">Stop</span>
+  <span >{{toggleButtonText$ | async}}</span>
 </button>
 <button mat-button
         class="reset-button"

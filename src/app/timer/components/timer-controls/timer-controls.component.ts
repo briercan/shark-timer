@@ -1,102 +1,90 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { retry } from 'rxjs/operators';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    Input,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { map, retry } from 'rxjs/operators';
+import { ActiveClockService } from '../../services/active-clock.service';
+import { TimerState } from '../../services/timer.service';
 
 @Component({
-  selector: 'app-timer-controls',
-  templateUrl: './timer-controls.component.html',
-  styleUrls: ['./timer-controls.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-timer-controls',
+    templateUrl: './timer-controls.component.html',
+    styleUrls: ['./timer-controls.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimerControlsComponent implements OnInit {
-  @ViewChild('alarm') alarmElementRef: ElementRef;
-  @Input() timerActive: boolean;
+    @ViewChild('alarm') alarmElementRef: ElementRef;
+    @Input() timerActive: boolean;
 
-  timerStart$ = new BehaviorSubject<boolean>(false);
-  timerEnd$ = new BehaviorSubject<boolean>(false);
-  timerReset$ = new BehaviorSubject<number>(0);
+    toggleButtonText$: Observable<string>;
 
-  stopwatchStart$ = new BehaviorSubject<boolean>(false);
-  stopwatchReset$ = new Subject<void>();
+    alarm: HTMLAudioElement;
+    alarmEnabled$ = new BehaviorSubject<boolean>(true);
+    alarmSounding$ = new BehaviorSubject<boolean>(false);
 
-  alarm: HTMLAudioElement;
-  alarmEnabled$ = new BehaviorSubject<boolean>(true);
-  alarmSounding$ = new BehaviorSubject<boolean>(false);
+    fullScreen$ = new BehaviorSubject<boolean>(false);
 
-  fullScreen$ = new BehaviorSubject<boolean>(false);
+    constructor(private activeClockService: ActiveClockService) {}
 
-  constructor() { }
-
-  ngOnInit() {
-    this.alarm = this.alarmElementRef.nativeElement;
-  }
-
-  startStop() {
-    if (this.timerActive) {
-      if (!this.timerEnd$.value) {
-        this.timerStart$.next(!this.timerStart$.value);
-      } else {
-        this.stopAlarm();
-      }
-    } else {
-      this.stopwatchStart$.next(!this.stopwatchStart$.value);
+    ngOnInit() {
+        this.alarm = this.alarmElementRef.nativeElement;
+        this.toggleButtonText$ = this.activeClockService.getState().pipe(
+            map((x) => {
+                if (x === TimerState.Stopped) {
+                    return 'Start';
+                } else if (x === TimerState.Running) {
+                    return 'Stop';
+                } else if (x === TimerState.Complete) {
+                    return 'End';
+                }
+            }),
+        );
     }
-  }
 
-  start() {
-    if (this.timerActive) {
-      this.timerStart$.next(true);
-    } else {
-      this.stopwatchStart$.next(true);
+    startStop() {
+        this.activeClockService.toggle();
     }
-  }
 
-  stop() {
-    if (this.timerActive) {
-      this.timerStart$.next(false);
-    } else {
-      this.stopwatchStart$.next(false);
+    start() {
+        this.activeClockService.start();
     }
-  }
 
-  reset() {
-    if (this.timerActive) {
-      this.timerReset$.next(0);
-    } else {
-      this.stopwatchReset$.next();
+    stop() {
+        this.activeClockService.stop();
     }
-  }
 
-  end(timerComplete: boolean) {
-    this.timerEnd$.next(timerComplete);
-    if (timerComplete) {
-      this.startAlarm();
+    reset() {
+        this.activeClockService.reset();
     }
-  }
 
-  toggleAlarm() {
-    this.alarmEnabled$.next(!this.alarmEnabled$.value);
-  }
-
-  startAlarm() {
-    if (this.alarmEnabled$.value && !this.alarmSounding$.value) {
-      this.alarmSounding$.next(true);
-      this.alarm.play();
+    end(timerComplete: boolean) {
+        this.activeClockService.end(timerComplete);
     }
-  }
 
-  stopAlarm() {
-    if (this.alarmEnabled$.value && this.alarmSounding$.value) {
-      this.alarmSounding$.next(false);
-      this.alarm.pause();
+    toggleAlarm() {
+        this.alarmEnabled$.next(!this.alarmEnabled$.value);
     }
-  }
 
-  toggleFullscreen() {
-    this.fullScreen$.next(!this.fullScreen$.value);
-  }
+    startAlarm() {
+        if (this.alarmEnabled$.value && !this.alarmSounding$.value) {
+            this.alarmSounding$.next(true);
+            this.alarm.play();
+        }
+    }
 
-  get started() {
-    return this.timerActive ? this.timerStart$.value : this.stopwatchStart$.value;
-  }
+    stopAlarm() {
+        if (this.alarmEnabled$.value && this.alarmSounding$.value) {
+            this.alarmSounding$.next(false);
+            this.alarm.pause();
+        }
+    }
+
+    toggleFullscreen() {
+        this.fullScreen$.next(!this.fullScreen$.value);
+    }
 }
