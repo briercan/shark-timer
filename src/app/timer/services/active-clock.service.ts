@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ClockType } from '../models/timer.models';
 import { StopwatchService } from './stopwatch.service';
@@ -13,6 +13,7 @@ export class ActiveClockService {
   private services: Record<string, IClockService> = {};
 
   private activeService: IClockService;
+
 
   constructor(private timerService: TimerService, private stopwatchService: StopwatchService) {
 

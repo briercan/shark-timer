@@ -23,7 +23,9 @@ export class StopwatchService implements IClockService {
   getState(): Observable<TimerState> {
     return this.isRunning$
     .pipe(
-      map(x => x ? TimerState.Running : TimerState.Complete)
+      map(x => {
+        return x ? TimerState.Running : TimerState.Stopped;
+      })
     );
   }
   end(arg: boolean) {
@@ -38,16 +40,6 @@ export class StopwatchService implements IClockService {
   }
   reset() {
     this.isOn = false;
-
-    this.time$ = this.isRunning$.pipe(
-      switchMap(start => (start ? this.interval$.pipe(mapTo(10)) : EMPTY)),
-      scan((acc, val) => acc + val, 0),
-      tap(x => {
-        console.log(x);
-      }),
-      takeUntil(this.resetClicked$)
-    );
-
     this.stopwatchReset$.next()
   }
 
@@ -62,5 +54,13 @@ export class StopwatchService implements IClockService {
 
   onReset = () => {
     return this.stopwatchReset$;
+  }
+
+  buildTime = (reset: Observable<void>) => {
+    return this.isRunning$.pipe(
+      switchMap(start => (start ? this.interval$.pipe(mapTo(10)) : EMPTY)),
+      scan((acc, val) => acc + val, 0),
+      takeUntil(reset)
+    );
   }
 }

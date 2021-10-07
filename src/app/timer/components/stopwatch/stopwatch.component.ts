@@ -40,11 +40,7 @@ export class StopwatchComponent implements OnInit, OnDestroy {
   resetTimer() {
     this.reset$.next();
 
-    this.time$ = this.stopwatchService.isRunning$.pipe(
-      switchMap(start => (start ? this.interval$.pipe(mapTo(10)) : EMPTY)),
-      scan((acc, val) => acc + val, 0),
-      takeUntil(this.reset$)
-    );
+    this.time$ = this.stopwatchService.buildTime(this.reset$);
   }
 
 }
