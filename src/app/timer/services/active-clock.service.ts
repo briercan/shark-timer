@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { of, Subject } from 'rxjs';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ClockType } from '../models/timer.models';
 import { StopwatchService } from './stopwatch.service';
@@ -12,7 +12,7 @@ export class ActiveClockService {
 
   private services: Record<string, IClockService> = {};
 
-  private activeService: IClockService;
+  private activeService$ = new BehaviorSubject<IClockService>(null);
 
 
   constructor(private timerService: TimerService, private stopwatchService: StopwatchService) {
@@ -22,41 +22,46 @@ export class ActiveClockService {
   }
 
   public setActiveClock = (type: ClockType) => {
-    this.activeService = this.services[type];
+    this.activeService$.next(this.services[type]);
   }
 
   public start = () => {
-    if(this.activeService){
-      this.activeService.start();
+    const activeService = this.activeService$.getValue();
+    if(activeService){
+      activeService.start();
     }
   }
 
   public stop = () => {
-    if(this.activeService){
-      this.activeService.stop();
+    const activeService = this.activeService$.getValue();
+    if(activeService){
+      activeService.stop();
     }
   }
 
   public reset = () => {
-    if(this.activeService){
-      this.activeService.reset();
+    const activeService = this.activeService$.getValue();
+    if(activeService){
+      activeService.reset();
     }
   }
 
   public toggle = () => {
-    if(this.activeService){
-      this.activeService.toggle();
+    const activeService = this.activeService$.getValue();
+    if(activeService){
+      activeService.toggle();
     }
   }
 
   public end = (arg: boolean) => {
-    if(this.activeService){
-      this.activeService.end(arg);
+    const activeService = this.activeService$.getValue();
+    if(activeService){
+      activeService.end(arg);
     }
   }
 
   public getState = () => {
-    return of(this.activeService)
+    return this.activeService$
     .pipe(
       switchMap(activeService => {
         if(!activeService){
