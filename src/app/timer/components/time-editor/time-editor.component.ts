@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { TimeConstants } from '../../models/timer.models';
 
 @Component({
   selector: 'app-time-editor',
@@ -15,10 +16,7 @@ import { ControlValueAccessor, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from 
 })
 export class TimeEditorComponent implements OnInit, ControlValueAccessor  {
 
-  //TODO: DRY
-  private hourInMs = 3600000;
-  private minuteInMs = 60000;
-  private secondInMs = 1000;
+
 
   onChange = (time: number) => {}
   onTouched = () => {}
@@ -39,20 +37,20 @@ export class TimeEditorComponent implements OnInit, ControlValueAccessor  {
 
   endSetTime() {
     const value = this.formGroup.value;
-    var timeValue = value.inputHours * this.hourInMs + value.inputMinutes * this.minuteInMs + value.inputSeconds * this.secondInMs;
+    var timeValue = value.inputHours * TimeConstants.hourInMs + value.inputMinutes * TimeConstants.minuteInMs + value.inputSeconds * TimeConstants.secondInMs;
     this.onChange(timeValue);
 
   }
   inputChange(hours: number, minutes: number, seconds: number) {
 
-    const timeVal = hours * this.hourInMs + minutes * this.minuteInMs + seconds * this.secondInMs;
+    const timeVal = hours * TimeConstants.hourInMs + minutes * TimeConstants.minuteInMs + seconds * TimeConstants.secondInMs;
     this.setTime.emit(timeVal);
   }
 
   writeValue(time: number): void {
-    this.formGroup.get('inputHours').setValue(Math.floor(time / this.hourInMs));
-    this.formGroup.get('inputMinutes').setValue(Math.floor((time / this.minuteInMs) % 60));
-    this.formGroup.get('inputSeconds').setValue(Math.floor((time / this.secondInMs) % 60));
+    this.formGroup.get('inputHours').setValue(Math.floor(time / TimeConstants.hourInMs));
+    this.formGroup.get('inputMinutes').setValue(Math.floor((time / TimeConstants.minuteInMs) % 60));
+    this.formGroup.get('inputSeconds').setValue(Math.floor((time / TimeConstants.secondInMs) % 60));
   }
   registerOnChange(fn: any): void {
     this.onChange = fn;

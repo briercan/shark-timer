@@ -1,27 +1,19 @@
 <div>
-  <ng-container *ngIf="hoursDigitTwo || hoursDigitOne">
+  <ng-container *ngIf="hours">
     <span class="act-hide time-display-digit"
-          tabindex="0">{{hoursDigitTwo}}</span>
-    <span class="act-hide time-display-digit"
-          tabindex="0">{{hoursDigitOne}}</span>
+          tabindex="0">{{time | timeFormat : 'hours'}}</span>
     <span class="act-hide time-display-sep">h</span>
   </ng-container>
-  <ng-container *ngIf="minutesDigitTwo || minutesDigitOne">
+  <ng-container *ngIf="minutes">
     <span class="act-hide time-display-digit"
-          tabindex="0">{{minutesDigitTwo}}</span>
-    <span class="time-display-digit"
-          tabindex="0">{{minutesDigitOne}}</span>
+          tabindex="0">{{time | timeFormat : 'minutes'}} </span>
     <span class="time-display-sep">m</span>
   </ng-container>
   <span class="time-display-digit"
-        tabindex="0">{{secondsDigitTwo}}</span>
-  <span class="time-display-digit"
-        tabindex="0">{{secondsDigitOne}}</span>
+        tabindex="0">{{time | timeFormat : 'seconds'}}</span>
   <span class="time-display-sep">s</span>
   <ng-container *ngIf="showHundriths">
     <span class="time-display-digit time-display-small-digit"
-          tabindex="0">{{cSecondsDigitTwo}}</span>
-    <span class="time-display-digit time-display-small-digit"
-          tabindex="0">{{cSecondsDigitOne}}</span>
+          tabindex="0">{{time | timeFormat : 'hundriths'}}</span>
   </ng-container>
 </div>

@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { ChangeDetectionStrategy, Component, OnInit, Input } from '@angular/core';
+import { TimeConstants } from '../../models/timer.models';
 
 @Component({
   selector: 'app-time-display',
@@ -8,85 +8,21 @@ import { BehaviorSubject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimeDisplayComponent implements OnInit {
-  private hourInMs = 3600000;
-  private minuteInMs = 60000;
-  private secondInMs = 1000;
 
-  @Input() time: number = (12 * this.hourInMs) + (34 * this.minuteInMs) + (56 * 1000) + 780;
+  @Input() time: number = (12 * TimeConstants.hourInMs) + (34 * TimeConstants.minuteInMs) + (56 * 1000) + 780;
   @Input() showHundriths: boolean = true;
-  @Input() canSetTime: boolean = false;
-
-  @Output() setTime = new EventEmitter<number>();
-
-
-  inputHours: number;
-  inputMinutes: number;
-  inputSeconds: number;
 
   constructor() { }
 
   ngOnInit() {
   }
 
-  startSetTime() {
-    if (this.canSetTime) {
-      this.inputHours = this.hours;
-      this.inputMinutes = this.minutes;
-      this.inputSeconds = this.seconds;
-    }
-  }
-
-
   get hours(): number {
-    return Math.floor(this.time / this.hourInMs);
-  }
-
-  get hoursDigitTwo(): number {
-    return this.digitTwo(this.hours);
-  }
-  get hoursDigitOne(): number {
-    return this.digitOne(this.hours);
+    return Math.floor(this.time / TimeConstants.hourInMs);
   }
 
   get minutes(): number {
-    return Math.floor((this.time / this.minuteInMs) % 60);
-  }
-
-  get minutesDigitTwo(): number {
-    return this.digitTwo(this.minutes);
-  }
-  get minutesDigitOne(): number {
-    return this.digitOne(this.minutes);
-  }
-
-  get seconds(): number {
-    return Math.floor((this.time / this.secondInMs) % 60);
-  }
-
-  get secondsDigitTwo(): number {
-    return this.digitTwo(this.seconds);
-  }
-  get secondsDigitOne(): number {
-    return this.digitOne(this.seconds);
-  }
-
-  get cSeconds(): number {
-    return Math.floor((this.time / 10) % 100);
-  }
-
-  get cSecondsDigitTwo(): number {
-    return this.digitTwo(this.cSeconds);
-  }
-  get cSecondsDigitOne(): number {
-    return this.digitOne(this.cSeconds);
-  }
-
-
-  private digitTwo(val: number) {
-    return Math.floor((val / 10) % 10);
-  }
-  private digitOne(val: number) {
-    return val % 10;
+    return Math.floor((this.time / TimeConstants.minuteInMs) % 60);
   }
 
 }

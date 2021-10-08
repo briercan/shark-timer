@@ -27,6 +27,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TimeEditorComponent } from './timer/components/time-editor/time-editor.component';
+import { TimeFormatPipe } from './timer/services/time-format.pipe';
 
 
 @NgModule({
@@ -38,6 +39,7 @@ import { TimeEditorComponent } from './timer/components/time-editor/time-editor.
         TimerControlsComponent,
         TimeDisplayComponent,
         TimeEditorComponent,
+        TimeFormatPipe,
     ],
     imports: [
         BrowserModule,

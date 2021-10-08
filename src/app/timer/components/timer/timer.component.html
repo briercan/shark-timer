@@ -4,7 +4,6 @@
                   *ngIf="!showEditor"
                   [time]="time$ | async"
                   [showHundriths]="false"
-                  [canSetTime]="true"
                   (setTime)="setTime($event)"></app-time-display>
 <app-time-editor *ngIf="showEditor" [formControl]="timerControl" name="time">
 
