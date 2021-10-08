@@ -9,6 +9,15 @@ You do not need to keep the existing code or project structure.
 
 The only requirement is that it maintains basic the functionality of a timer/stopwatch, and that it meets your standards!
 
+## Changes:
+* Created services to handle the timer and stopwatch logic - removed tight coupling between timer components and controls components
+* Removed the timer editor into its own control
+* Created a pipe to display the time
+
+## If I had more time:
+* I'd like to have fixed the tabs so that they change the route
+* There are a couple of places which have repeated logic and could be put into a service
+
 ## Original Output Example
 
 ### Timer

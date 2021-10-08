@@ -44,10 +44,6 @@ export class TimerService implements IClockService {
 
   end(timerComplete: boolean) {
     this.timerEnd$.next(timerComplete);
-    if (timerComplete) {
-      //this.startAlarm();
-      //TODO: this
-    }
   }
   reset() {
     this.timerReset$.next(0);
